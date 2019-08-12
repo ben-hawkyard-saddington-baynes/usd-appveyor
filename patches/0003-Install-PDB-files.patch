@@ -1,0 +1,84 @@
+From 6e08edce84a0a7f0c1b43039ec4922ca85cec1ea Mon Sep 17 00:00:00 2001
+From: Victor Yudin <victor@yudin.org>
+Date: Sun, 2 Dec 2018 10:16:57 -0500
+Subject: [PATCH] Install PDB files
+
+---
+ cmake/macros/Private.cmake | 24 ++++++++++++++++++++++++
+ cmake/macros/Public.cmake  |  6 ++++++
+ 2 files changed, 30 insertions(+)
+
+diff --git a/cmake/macros/Private.cmake b/cmake/macros/Private.cmake
+index 761bcf6d..02d88ddf 100644
+--- a/cmake/macros/Private.cmake
++++ b/cmake/macros/Private.cmake
+@@ -1027,6 +1027,12 @@ function(_pxr_python_module NAME)
+         LIBRARY DESTINATION ${libInstallPrefix}
+         RUNTIME DESTINATION ${libInstallPrefix}
+     )
++
++    install(
++        FILES $<TARGET_PDB_FILE:${LIBRARY_NAME}>
++        DESTINATION ${libInstallPrefix}
++        OPTIONAL
++    )
+ 
+     if(NOT "${PXR_PREFIX}" STREQUAL "")
+         if(args_PRECOMPILED_HEADERS)
+@@ -1291,6 +1297,12 @@ function(_pxr_library NAME)
+                 PUBLIC_HEADER DESTINATION ${headerInstallPrefix}
+             )
+ 
++            install(
++                FILES $<TARGET_PDB_FILE:${NAME}>
++                DESTINATION ${libInstallPrefix}
++                OPTIONAL
++            )
++
+             export(TARGETS ${NAME}
+                 APPEND
+                 FILE "${PROJECT_BINARY_DIR}/pxrTargets.cmake"
+@@ -1298,11 +1310,23 @@ function(_pxr_library NAME)
+         else()
+             install(
+                 TARGETS ${NAME}
++                EXPORT pxrTargets
+                 LIBRARY DESTINATION ${libInstallPrefix}
+                 ARCHIVE DESTINATION ${libInstallPrefix}
+                 RUNTIME DESTINATION ${libInstallPrefix}
+                 PUBLIC_HEADER DESTINATION ${headerInstallPrefix}
+             )
++
++            install(
++                FILES $<TARGET_PDB_FILE:${NAME}>
++                DESTINATION ${libInstallPrefix}
++                OPTIONAL
++            )
++
++            export(TARGETS ${NAME}
++                APPEND
++                FILE "${PROJECT_BINARY_DIR}/pxrTargets.cmake"
++            )
+         endif()
+     endif()
+     _install_resource_files(
+diff --git a/cmake/macros/Public.cmake b/cmake/macros/Public.cmake
+index 583a56a2..8421b379 100644
+--- a/cmake/macros/Public.cmake
++++ b/cmake/macros/Public.cmake
+@@ -898,6 +898,12 @@ function(pxr_toplevel_prologue)
+                 ARCHIVE DESTINATION ${libInstallPrefix}
+                 RUNTIME DESTINATION ${libInstallPrefix}
+             )
++
++            install(
++                FILES $<TARGET_PDB_FILE:usd_ms>
++                DESTINATION ${libInstallPrefix}
++                OPTIONAL
++            )
+         endif()
+     endif()
+ 
+-- 
+2.18.0.windows.1
+
